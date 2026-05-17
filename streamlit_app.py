@@ -63,10 +63,20 @@ section[data-testid="stFileUploader"] {{
 }}
 
 button[kind="primary"] {{
+    background-color: {ACCENT} !important;
+    color: black !important;
+    font-weight: bold !important;
+    border-radius: 10px !important;
+}}
+
+.stDownloadButton button {{
     background-color: {PRIMARY} !important;
     color: black !important;
-    border-radius: 10px !important;
-    font-weight: bold !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    height: 50px;
+    width: 100%;
+    font-size: 16px !important;
 }}
 
 div[data-testid="metric-container"] {{
@@ -95,8 +105,8 @@ st.sidebar.title("⚙ Forecast Settings")
 forecast_days = st.sidebar.slider(
     "Forecast Days",
     7,
-    90,
-    30
+    120,
+    60
 )
 
 # =========================================
@@ -108,14 +118,26 @@ uploaded_file = st.file_uploader(
 )
 
 # =========================================
-# MAIN LOGIC
+# MAIN APP
 # =========================================
 if uploaded_file:
 
+    # =====================================
+    # READ DATA
+    # =====================================
     df = pd.read_csv(uploaded_file)
 
-    st.subheader("📄 Dataset Preview")
-    st.dataframe(df.head())
+    # =====================================
+    # COLLAPSIBLE DATA PREVIEW
+    # =====================================
+    with st.expander(
+        "📄 Click to View Dataset Preview"
+    ):
+
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
 
     # =====================================
     # VALIDATION
@@ -129,7 +151,7 @@ if uploaded_file:
     else:
 
         # =================================
-        # DATE PROCESSING
+        # DATE HANDLING
         # =================================
         if "Date" in df.columns:
 
@@ -148,7 +170,7 @@ if uploaded_file:
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # CLOSE PRICES
+        # CLOSE PRICE
         # =================================
         close_prices = df["Close"].dropna().values
 
@@ -208,31 +230,38 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
+
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
+
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
+
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
                 )
 
             # =================================
-            # PLOT GRAPH
+            # BETTER STOCK GRAPH
             # =================================
-            st.subheader("📈 Stock Price Plot")
+            st.subheader(
+                "📈 Historical vs Forecast Prices"
+            )
 
             fig = go.Figure()
 
-            # Historical
+            # =================================
+            # HISTORICAL PRICE AREA GRAPH
+            # =================================
             fig.add_trace(go.Scatter(
 
                 x=df["Date"],
@@ -240,15 +269,26 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Historical",
+                name="Historical Price",
 
                 line=dict(
                     color=PRIMARY,
                     width=3
-                )
+                ),
+
+                fill='tozeroy',
+
+                fillcolor='rgba(196,181,253,0.15)',
+
+                hovertemplate=
+                "<b>Historical Price</b><br>" +
+                "Date: %{x}<br>" +
+                "Price: $%{y:.2f}<extra></extra>"
             ))
 
-            # Forecast
+            # =================================
+            # FORECAST GRAPH
+            # =================================
             fig.add_trace(go.Scatter(
 
                 x=pred_df["Date"],
@@ -256,29 +296,40 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Forecast",
+                name="Forecast Price",
 
                 line=dict(
                     color=ACCENT,
                     width=4,
                     dash="dash"
-                )
+                ),
+
+                hovertemplate=
+                "<b>Forecast Price</b><br>" +
+                "Date: %{x}<br>" +
+                "Forecast: $%{y:.2f}<extra></extra>"
             ))
 
-            # Forecast Start
+            # =================================
+            # FORECAST START POINT
+            # =================================
             fig.add_trace(go.Scatter(
 
                 x=[pred_df["Date"].iloc[0]],
                 y=[pred_df["Predicted Price"].iloc[0]],
 
-                mode="markers",
+                mode="markers+text",
+
+                text=["Forecast Starts"],
+
+                textposition="top center",
 
                 marker=dict(
                     color=SECONDARY,
-                    size=12
+                    size=14
                 ),
 
-                name="Forecast Start"
+                showlegend=False
             ))
 
             # =================================
@@ -289,20 +340,16 @@ if uploaded_file:
                 paper_bgcolor=BG,
                 plot_bgcolor=CARD,
 
-                height=650,
+                height=700,
 
                 hovermode="x unified",
 
-                font=dict(
-                    color="white",
-                    size=14
-                ),
-
                 title=dict(
-                    text="Apple Stock Price Prediction",
+                    text="Apple Stock Price Forecast",
                     x=0.5,
                     font=dict(
-                        size=26
+                        size=28,
+                        color="white"
                     )
                 ),
 
@@ -321,21 +368,36 @@ if uploaded_file:
                 legend=dict(
                     orientation="h",
                     y=1.02,
-                    x=0.3
+                    x=0.3,
+                    bgcolor="rgba(0,0,0,0)"
+                ),
+
+                font=dict(
+                    color="white",
+                    size=14
                 )
             )
 
+            # =================================
+            # SHOW GRAPH
+            # =================================
             st.plotly_chart(
                 fig,
                 use_container_width=True
             )
 
             # =================================
-            # FORECAST TABLE
+            # LARGE FORECAST TABLE
             # =================================
-            st.subheader("📅 Forecast Table")
+            st.subheader(
+                "📅 Detailed Forecast Data"
+            )
 
-            st.dataframe(pred_df)
+            st.dataframe(
+                pred_df,
+                height=500,
+                use_container_width=True
+            )
 
             # =================================
             # DOWNLOAD BUTTON
@@ -345,7 +407,7 @@ if uploaded_file:
             ).encode("utf-8")
 
             st.download_button(
-                label="⬇ Download Forecast CSV",
+                label="⬇ DOWNLOAD FORECAST CSV",
                 data=csv,
                 file_name="forecast.csv",
                 mime="text/csv"
