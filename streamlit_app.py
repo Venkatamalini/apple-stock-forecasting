@@ -109,6 +109,12 @@ st.markdown(
 st.sidebar.title("⚙️ Forecast Settings")
 
 # =========================================
+# SESSION STATE DEFAULTS
+# =========================================
+if "historical_days" not in st.session_state:
+    st.session_state.historical_days = 180
+
+# =========================================
 # FORECAST DAYS
 # =========================================
 st.sidebar.markdown("### Forecast Days")
@@ -128,46 +134,43 @@ st.sidebar.markdown("---")
 # =========================================
 st.sidebar.markdown("### Quick Historical Range")
 
-# Default value
-historical_days = 180
-
 row1_col1, row1_col2, row1_col3 = st.sidebar.columns(3)
 
 if row1_col1.button("1D"):
-    historical_days = 1
+    st.session_state.historical_days = 1
 
 if row1_col2.button("5D"):
-    historical_days = 5
+    st.session_state.historical_days = 5
 
 if row1_col3.button("1M"):
-    historical_days = 30
+    st.session_state.historical_days = 30
 
 row2_col1, row2_col2, row2_col3 = st.sidebar.columns(3)
 
 if row2_col1.button("3M"):
-    historical_days = 90
+    st.session_state.historical_days = 90
 
 if row2_col2.button("6M"):
-    historical_days = 180
+    st.session_state.historical_days = 180
 
 if row2_col3.button("1Y"):
-    historical_days = 365
+    st.session_state.historical_days = 365
 
 row3_col1, row3_col2, row3_col3 = st.sidebar.columns(3)
 
 if row3_col1.button("YTD"):
-    historical_days = 220
+    st.session_state.historical_days = 220
 
 if row3_col2.button("2Y"):
-    historical_days = 730
+    st.session_state.historical_days = 730
 
 if row3_col3.button("5Y"):
-    historical_days = 1825
+    st.session_state.historical_days = 1825
 
 row4_col1 = st.sidebar.columns(1)[0]
 
 if row4_col1.button("MAX"):
-    historical_days = 3650
+    st.session_state.historical_days = 3650
 
 st.sidebar.markdown("---")
 
@@ -180,9 +183,14 @@ historical_days = st.sidebar.slider(
     "",
     min_value=1,
     max_value=3650,
-    value=historical_days,
+    value=st.session_state.historical_days,
     key="historical_slider"
 )
+
+# =========================================
+# UPDATE SESSION STATE
+# =========================================
+st.session_state.historical_days = historical_days
 
 # =========================================
 # FILE UPLOAD
