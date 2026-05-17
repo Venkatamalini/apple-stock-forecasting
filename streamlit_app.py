@@ -160,13 +160,24 @@ if uploaded_file:
             
 
             # =============================
-            # FUTURE DATES
+            # SAFE DATE HANDLING
             # =============================
+
+        df["Date"] = pd.to_datetime(
+            df["Date"],
+            errors="coerce"
+    )
+
+        df = df.dropna(subset=["Date"])
+
+        if df.empty:
+            last_date = pd.Timestamp.today()
+        else:
             last_date = df["Date"].iloc[-1]
 
             future_dates = pd.date_range(
-                start=last_date,
-                periods=forecast_days + 1
+            start=last_date,
+            periods=forecast_days + 1
             )[1:]
 
             # =============================
