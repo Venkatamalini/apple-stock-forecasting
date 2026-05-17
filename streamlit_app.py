@@ -108,18 +108,36 @@ st.markdown(
 # =========================================
 st.sidebar.title("⚙️ Forecast Settings")
 
+# =========================================
+# FORECAST DAYS
+# =========================================
+st.sidebar.markdown("### Forecast Days")
+
 forecast_days = st.sidebar.slider(
-    "Forecast Days",
+    "",
     min_value=7,
     max_value=120,
-    value=60
+    value=60,
+    key="forecast_slider"
 )
 
-historical_days = st.sidebar.slider(
-    "Historical Data Days",
-    min_value=30,
-    max_value=365,
-    value=180
+st.sidebar.markdown("---")
+
+# =========================================
+# HISTORICAL DATA MONTHS
+# =========================================
+st.sidebar.markdown("### Historical Data Range (Months)")
+
+historical_months = st.sidebar.slider(
+    "",
+    min_value=1,
+    max_value=120,
+    value=6,
+    key="historical_months_slider"
+)
+
+st.sidebar.markdown(
+    f"Showing last **{historical_months} months** of historical stock data."
 )
 
 # =========================================
@@ -181,14 +199,22 @@ if uploaded_file:
             )
 
         # =================================
-        # REMOVE INVALID DATES
+        # CLEAN DATA
         # =================================
         df = df.dropna(subset=["Date"])
+        df = df.sort_values("Date")
 
         # =================================
-        # SORT DATES PROPERLY
+        # FILTER HISTORICAL DATA BY MONTHS
         # =================================
-        df = df.sort_values("Date")
+        historical_start_date = (
+            df["Date"].max() -
+            pd.DateOffset(months=historical_months)
+        )
+
+        historical_df = df[
+            df["Date"] >= historical_start_date
+        ]
 
         # =================================
         # CLOSE PRICE DATA
@@ -236,18 +262,14 @@ if uploaded_file:
             )[1:]
 
             pred_df = pd.DataFrame({
-
                 "Date": future_dates,
-
                 "Predicted Price": preds
             })
 
             # =================================
             # METRICS
             # =================================
-            st.subheader(
-                "📊 Forecast Insights"
-            )
+            st.subheader("📊 Forecast Insights")
 
             change = (
                 (preds[-1] - preds[0])
@@ -257,21 +279,18 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
-
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
-
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
@@ -280,19 +299,13 @@ if uploaded_file:
             # =================================
             # STOCK MARKET GRAPH
             # =================================
-            st.subheader(
-                "📈 Apple Stock Prediction"
-            )
+            st.subheader("📈 Apple Stock Prediction")
 
             fig = go.Figure()
 
             # =================================
-            # HISTORICAL STOCK LINE
+            # HISTORICAL LINE
             # =================================
-            historical_df = df.tail(
-                historical_days
-            )
-
             fig.add_trace(go.Scatter(
 
                 x=historical_df["Date"],
