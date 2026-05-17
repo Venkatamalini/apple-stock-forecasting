@@ -423,13 +423,13 @@ if uploaded_file:
                 ),
 
                 xaxis=dict(
-                    title="Date",
+                    title="X-Axis → Date",
                     color=TEXT,
                     showgrid=False
                 ),
 
                 yaxis=dict(
-                    title="Stock Price ($)",
+                    title="Y-Axis → Stock Price ($)",
                     color=TEXT,
                     gridcolor="rgba(0,0,0,0.08)"
                 ),
