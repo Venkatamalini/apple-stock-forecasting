@@ -51,8 +51,12 @@ h2, h3 {{
     color: white !important;
 }}
 
-p, label, div {{
+p, label, div, span {{
     color: {TEXT} !important;
+}}
+
+small {{
+    color: white !important;
 }}
 
 section[data-testid="stFileUploader"] {{
@@ -60,6 +64,10 @@ section[data-testid="stFileUploader"] {{
     padding: 15px;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.1);
+}}
+
+section[data-testid="stFileUploader"] * {{
+    color: white !important;
 }}
 
 button[kind="primary"] {{
@@ -84,6 +92,57 @@ div[data-testid="metric-container"] {{
     border-radius: 16px;
     padding: 18px;
     border: 1px solid rgba(255,255,255,0.08);
+}}
+
+[data-testid="stDataFrame"] {{
+    background-color: {CARD} !important;
+}}
+
+[data-testid="stDataFrame"] * {{
+    color: white !important;
+}}
+
+.ag-root-wrapper {{
+    background-color: {CARD} !important;
+}}
+
+.ag-header {{
+    background-color: #2D3748 !important;
+}}
+
+.ag-header-cell-label {{
+    color: white !important;
+    font-weight: bold !important;
+}}
+
+.ag-cell {{
+    color: white !important;
+    background-color: {CARD} !important;
+}}
+
+.ag-menu {{
+    background-color: #1E293B !important;
+    color: white !important;
+}}
+
+.ag-menu-option {{
+    color: white !important;
+}}
+
+.ag-menu-option:hover {{
+    background-color: #334155 !important;
+}}
+
+.js-plotly-plot .plotly .legendtext {{
+    fill: white !important;
+}}
+
+.js-plotly-plot .plotly .xtick text {{
+    fill: white !important;
+}}
+
+.js-plotly-plot .plotly .ytick text {{
+    fill: white !important;
 }}
 
 </style>
@@ -129,7 +188,7 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
 
     # =====================================
-    # COLLAPSIBLE DATA PREVIEW
+    # DATASET PREVIEW
     # =====================================
     with st.expander(
         "📄 Click to View Dataset Preview"
@@ -270,7 +329,7 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Historical Price",
+                name="Historical Stock Price",
 
                 line=dict(
                     color=PRIMARY,
@@ -282,7 +341,7 @@ if uploaded_file:
                 fillcolor='rgba(196,181,253,0.12)',
 
                 hovertemplate=
-                "<b>Historical Price</b><br>" +
+                "<b>Historical Stock Price</b><br>" +
                 "Date: %{x}<br>" +
                 "Price: $%{y:.2f}<extra></extra>"
             ))
@@ -297,7 +356,7 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Forecast Price",
+                name="Predicted Stock Price",
 
                 line=dict(
                     color=ACCENT,
@@ -306,7 +365,7 @@ if uploaded_file:
                 ),
 
                 hovertemplate=
-                "<b>Forecast Price</b><br>" +
+                "<b>Predicted Stock Price</b><br>" +
                 "Date: %{x}<br>" +
                 "Forecast: $%{y:.2f}<extra></extra>"
             ))
@@ -369,7 +428,11 @@ if uploaded_file:
                 legend=dict(
                     orientation="h",
                     y=1.02,
-                    x=0.3,
+                    x=0.2,
+                    font=dict(
+                        color="white",
+                        size=14
+                    ),
                     bgcolor="rgba(0,0,0,0)"
                 ),
 
@@ -388,7 +451,7 @@ if uploaded_file:
             )
 
             # =================================
-            # CLEAN FORECAST TABLE
+            # FORECAST TABLE
             # =================================
             st.subheader("📅 Detailed Forecast Data")
 
