@@ -97,26 +97,30 @@ if uploaded_file:
         # DATE PROCESSING
         # =================================
         if "Date" in df.columns:
+
             df["Date"] = pd.to_datetime(
                 df["Date"],
                 errors="coerce"
             )
 
         else:
+
             df["Date"] = pd.date_range(
                 end=pd.Timestamp.today(),
                 periods=len(df)
             )
 
+        # Remove invalid dates
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # CLOSE PRICE
+        # CLOSE PRICES
         # =================================
         close_prices = df["Close"].dropna().values
 
         if len(close_prices) < 2:
-            st.error("Not enough data")
+
+            st.error("Not enough data for prediction")
 
         else:
 
@@ -125,15 +129,21 @@ if uploaded_file:
             # =================================
             last_price = close_prices[-1]
 
-            trend = close_prices[-1] - close_prices[-2]
+            trend = (
+                close_prices[-1] - close_prices[-2]
+            )
 
             preds = []
 
             next_price = last_price
 
             for _ in range(forecast_days):
+
                 next_price += trend
-                preds.append(round(next_price, 2))
+
+                preds.append(
+                    round(next_price, 2)
+                )
 
             # =================================
             # FUTURE DATES
@@ -142,7 +152,7 @@ if uploaded_file:
 
             future_dates = pd.date_range(
                 start=last_date,
-                periods=forecast_days + 1
+                periods=len(preds) + 1
             )[1:]
 
             # =================================
@@ -188,22 +198,27 @@ if uploaded_file:
             st.subheader("💡 Recommendation")
 
             if change > 1:
+
                 st.success("BUY SIGNAL")
 
             elif change < -1:
+
                 st.error("SELL SIGNAL")
 
             else:
+
                 st.warning("HOLD POSITION")
 
             # =================================
-            # CHART
+            # PROFESSIONAL STOCK CHART
             # =================================
             st.subheader("📈 Stock Forecast Chart")
 
             fig = go.Figure()
 
-            # Actual prices
+            # -------------------------------
+            # Actual Stock Prices
+            # -------------------------------
             fig.add_trace(go.Scatter(
                 x=df["Date"],
                 y=df["Close"],
@@ -211,38 +226,98 @@ if uploaded_file:
                 name="Actual Price",
                 line=dict(
                     color="white",
-                    width=3
-                )
+                    width=2.5
+                ),
+                hovertemplate=
+                "<b>Actual Price</b><br>" +
+                "Date: %{x}<br>" +
+                "Price: $%{y:.2f}<extra></extra>"
             ))
 
-            # Forecast prices
+            # -------------------------------
+            # Forecast Prices
+            # -------------------------------
             fig.add_trace(go.Scatter(
                 x=pred_df["Date"],
                 y=pred_df["Predicted Price"],
                 mode="lines",
-                name="Forecast Price",
+                name="Forecast",
                 line=dict(
-                    color="#00FFAA",
+                    color="#00FF99",
                     width=3,
                     dash="dash"
+                ),
+                hovertemplate=
+                "<b>Forecast Price</b><br>" +
+                "Date: %{x}<br>" +
+                "Predicted: $%{y:.2f}<extra></extra>"
+            ))
+
+            # -------------------------------
+            # Prediction Start Point
+            # -------------------------------
+            fig.add_trace(go.Scatter(
+                x=[pred_df["Date"].iloc[0]],
+                y=[pred_df["Predicted Price"].iloc[0]],
+                mode="markers",
+                name="Prediction Start",
+                marker=dict(
+                    color="yellow",
+                    size=10,
+                    symbol="circle"
                 )
             ))
 
+            # -------------------------------
             # Layout
+            # -------------------------------
             fig.update_layout(
+
                 template="plotly_dark",
+
                 paper_bgcolor="black",
                 plot_bgcolor="black",
-                font=dict(color="white"),
-                xaxis_title="Date",
-                yaxis_title="Stock Price",
-                hovermode="x unified",
-                height=600,
+
+                font=dict(
+                    color="white",
+                    size=14
+                ),
+
+                height=650,
+
+                title=dict(
+                    text="Apple Stock Price Forecast",
+                    x=0.5,
+                    font=dict(size=24)
+                ),
+
+                xaxis=dict(
+                    title="Date",
+                    showgrid=False,
+                    zeroline=False
+                ),
+
+                yaxis=dict(
+                    title="Stock Price ($)",
+                    showgrid=True,
+                    gridcolor="rgba(255,255,255,0.1)"
+                ),
+
                 legend=dict(
-                    bgcolor="black"
-                )
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1,
+                    bgcolor="rgba(0,0,0,0)"
+                ),
+
+                hovermode="x unified"
             )
 
+            # -------------------------------
+            # Render Chart
+            # -------------------------------
             st.plotly_chart(
                 fig,
                 use_container_width=True
@@ -256,7 +331,7 @@ if uploaded_file:
             st.dataframe(pred_df)
 
             # =================================
-            # DOWNLOAD
+            # DOWNLOAD BUTTON
             # =================================
             csv = pred_df.to_csv(
                 index=False
@@ -270,4 +345,7 @@ if uploaded_file:
             )
 
 else:
-    st.info("⬆ Upload a stock CSV file to start forecasting")
+
+    st.info(
+        "⬆ Upload a stock CSV file to start forecasting"
+    )
