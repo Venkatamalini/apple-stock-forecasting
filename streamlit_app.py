@@ -93,6 +93,7 @@ div[data-testid="metric-container"] {{
 # TITLE
 # =========================================
 st.title("📈 Apple Stock Price Forecasting")
+
 st.markdown(
     "### AI-Powered Financial Forecast Dashboard"
 )
@@ -251,7 +252,7 @@ if uploaded_file:
                 )
 
             # =================================
-            # BETTER STOCK GRAPH
+            # STOCK GRAPH
             # =================================
             st.subheader(
                 "📈 Historical vs Forecast Prices"
@@ -260,7 +261,7 @@ if uploaded_file:
             fig = go.Figure()
 
             # =================================
-            # HISTORICAL PRICE AREA GRAPH
+            # HISTORICAL PRICE
             # =================================
             fig.add_trace(go.Scatter(
 
@@ -278,7 +279,7 @@ if uploaded_file:
 
                 fill='tozeroy',
 
-                fillcolor='rgba(196,181,253,0.15)',
+                fillcolor='rgba(196,181,253,0.12)',
 
                 hovertemplate=
                 "<b>Historical Price</b><br>" +
@@ -311,7 +312,7 @@ if uploaded_file:
             ))
 
             # =================================
-            # FORECAST START POINT
+            # FORECAST START MARKER
             # =================================
             fig.add_trace(go.Scatter(
 
@@ -387,14 +388,33 @@ if uploaded_file:
             )
 
             # =================================
-            # LARGE FORECAST TABLE
+            # STYLED FORECAST TABLE
             # =================================
             st.subheader(
                 "📅 Detailed Forecast Data"
             )
 
+            styled_df = pred_df.style\
+                .set_properties(**{
+                    'background-color': '#1E293B',
+                    'color': 'white',
+                    'border-color': '#334155',
+                    'font-size': '15px'
+                })\
+                .set_table_styles([
+                    {
+                        'selector': 'th',
+                        'props': [
+                            ('background-color', '#C4B5FD'),
+                            ('color', 'black'),
+                            ('font-size', '16px'),
+                            ('font-weight', 'bold')
+                        ]
+                    }
+                ])
+
             st.dataframe(
-                pred_df,
+                styled_df,
                 height=500,
                 use_container_width=True
             )
