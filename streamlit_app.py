@@ -182,7 +182,7 @@ if uploaded_file:
         else:
 
             # =================================
-            # FORECAST
+            # FORECAST LOGIC
             # =================================
             last_price = close_prices[-1]
 
@@ -388,35 +388,31 @@ if uploaded_file:
             )
 
             # =================================
-            # STYLED FORECAST TABLE
+            # CLEAN FORECAST TABLE
             # =================================
-            st.subheader(
-                "📅 Detailed Forecast Data"
-            )
-
-            styled_df = pred_df.style\
-                .set_properties(**{
-                    'background-color': '#1E293B',
-                    'color': 'white',
-                    'border-color': '#334155',
-                    'font-size': '15px'
-                })\
-                .set_table_styles([
-                    {
-                        'selector': 'th',
-                        'props': [
-                            ('background-color', '#C4B5FD'),
-                            ('color', 'black'),
-                            ('font-size', '16px'),
-                            ('font-weight', 'bold')
-                        ]
-                    }
-                ])
+            st.subheader("📅 Detailed Forecast Data")
 
             st.dataframe(
-                styled_df,
+
+                pred_df,
+
                 height=500,
-                use_container_width=True
+
+                use_container_width=True,
+
+                column_config={
+
+                    "Date": st.column_config.DateColumn(
+                        "Forecast Date",
+                        format="DD-MM-YYYY"
+                    ),
+
+                    "Predicted Price": st.column_config.NumberColumn(
+                        "Predicted Stock Price ($)",
+                        format="$ %.2f"
+                    )
+                }
+
             )
 
             # =================================
