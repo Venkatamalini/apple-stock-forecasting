@@ -12,19 +12,16 @@ st.set_page_config(
 )
 
 # =========================================
-# COLORS
+# PROFESSIONAL STOCK MARKET THEME
 # =========================================
-# =========================================
-# NEW MODERN COLOR PALETTE
-# =========================================
+PRIMARY = "#2563EB"      # Professional Blue
+SECONDARY = "#059669"    # Market Green
+ACCENT = "#DC2626"       # Financial Red
 
-PRIMARY = "#60A5FA"      # Blue
-SECONDARY = "#F59E0B"    # Orange
-ACCENT = "#34D399"       # Emerald
+BG = "#FAFAFA"           # Off-White / Cream
+CARD = "#FFFFFF"         # White Cards
+TEXT = "#1F2937"         # Dark Gray Text
 
-BG = "#111827"           # Dark Slate
-CARD = "#1F2937"         # Card Background
-TEXT = "#F9FAFB"         # Soft White
 # =========================================
 # CUSTOM CSS
 # =========================================
@@ -41,7 +38,8 @@ html, body, [class*="css"] {{
 }}
 
 [data-testid="stSidebar"] {{
-    background-color: {CARD};
+    background-color: #F3F4F6;
+    border-right: 1px solid #D1D5DB;
 }}
 
 h1 {{
@@ -51,7 +49,7 @@ h1 {{
 }}
 
 h2, h3 {{
-    color: white !important;
+    color: {TEXT} !important;
 }}
 
 p, label, div, span {{
@@ -59,30 +57,30 @@ p, label, div, span {{
 }}
 
 small {{
-    color: white !important;
+    color: {TEXT} !important;
 }}
 
 section[data-testid="stFileUploader"] {{
-    background-color: {CARD};
+    background-color: white;
     padding: 15px;
     border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid #D1D5DB;
 }}
 
 section[data-testid="stFileUploader"] * {{
-    color: white !important;
+    color: {TEXT} !important;
 }}
 
 button[kind="primary"] {{
-    background-color: {ACCENT} !important;
-    color: black !important;
+    background-color: {PRIMARY} !important;
+    color: white !important;
     font-weight: bold !important;
     border-radius: 10px !important;
 }}
 
 .stDownloadButton button {{
-    background-color: {PRIMARY} !important;
-    color: black !important;
+    background-color: {SECONDARY} !important;
+    color: white !important;
     font-weight: 800 !important;
     border-radius: 12px !important;
     height: 50px;
@@ -91,61 +89,62 @@ button[kind="primary"] {{
 }}
 
 div[data-testid="metric-container"] {{
-    background-color: {CARD};
+    background-color: white;
     border-radius: 16px;
     padding: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }}
 
 [data-testid="stDataFrame"] {{
-    background-color: {CARD} !important;
+    background-color: white !important;
 }}
 
 [data-testid="stDataFrame"] * {{
-    color: white !important;
+    color: {TEXT} !important;
 }}
 
 .ag-root-wrapper {{
-    background-color: {CARD} !important;
+    background-color: white !important;
 }}
 
 .ag-header {{
-    background-color: #2D3748 !important;
+    background-color: #E5E7EB !important;
 }}
 
 .ag-header-cell-label {{
-    color: white !important;
+    color: {TEXT} !important;
     font-weight: bold !important;
 }}
 
 .ag-cell {{
-    color: white !important;
-    background-color: {CARD} !important;
+    color: {TEXT} !important;
+    background-color: white !important;
 }}
 
 .ag-menu {{
-    background-color: #1E293B !important;
-    color: white !important;
+    background-color: white !important;
+    color: {TEXT} !important;
 }}
 
 .ag-menu-option {{
-    color: white !important;
+    color: {TEXT} !important;
 }}
 
 .ag-menu-option:hover {{
-    background-color: #334155 !important;
+    background-color: #F3F4F6 !important;
 }}
 
 .js-plotly-plot .plotly .legendtext {{
-    fill: white !important;
+    fill: {TEXT} !important;
 }}
 
 .js-plotly-plot .plotly .xtick text {{
-    fill: white !important;
+    fill: {TEXT} !important;
 }}
 
 .js-plotly-plot .plotly .ytick text {{
-    fill: white !important;
+    fill: {TEXT} !important;
 }}
 
 </style>
@@ -341,7 +340,7 @@ if uploaded_file:
 
                 fill='tozeroy',
 
-                fillcolor='rgba(196,181,253,0.12)',
+                fillcolor='rgba(37,99,235,0.08)',
 
                 hovertemplate=
                 "<b>Historical Stock Price</b><br>" +
@@ -362,7 +361,7 @@ if uploaded_file:
                 name="Predicted Stock Price",
 
                 line=dict(
-                    color=ACCENT,
+                    color=SECONDARY,
                     width=4,
                     dash="dash"
                 ),
@@ -388,8 +387,8 @@ if uploaded_file:
                 textposition="top center",
 
                 marker=dict(
-                    color=SECONDARY,
-                    size=14
+                    color=ACCENT,
+                    size=12
                 ),
 
                 showlegend=False
@@ -400,8 +399,8 @@ if uploaded_file:
             # =================================
             fig.update_layout(
 
-                paper_bgcolor=BG,
-                plot_bgcolor=CARD,
+                paper_bgcolor="#FAFAFA",
+                plot_bgcolor="#FFFFFF",
 
                 height=700,
 
@@ -412,20 +411,20 @@ if uploaded_file:
                     x=0.5,
                     font=dict(
                         size=28,
-                        color="white"
+                        color=TEXT
                     )
                 ),
 
                 xaxis=dict(
                     title="Date",
-                    color="white",
+                    color=TEXT,
                     showgrid=False
                 ),
 
                 yaxis=dict(
                     title="Stock Price ($)",
-                    color="white",
-                    gridcolor="rgba(255,255,255,0.08)"
+                    color=TEXT,
+                    gridcolor="rgba(0,0,0,0.08)"
                 ),
 
                 legend=dict(
@@ -433,14 +432,14 @@ if uploaded_file:
                     y=1.02,
                     x=0.2,
                     font=dict(
-                        color="white",
+                        color=TEXT,
                         size=14
                     ),
                     bgcolor="rgba(0,0,0,0)"
                 ),
 
                 font=dict(
-                    color="white",
+                    color=TEXT,
                     size=14
                 )
             )
