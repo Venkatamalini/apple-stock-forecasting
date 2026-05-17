@@ -453,32 +453,34 @@ if uploaded_file:
             )
 
             # =================================
-            # FORECAST TABLE
+            # CLICK-VIEW FORECAST TABLE
             # =================================
-            st.subheader("📅 Detailed Forecast Data")
+            with st.expander(
+                "📅 Click to View Detailed Forecast Data"
+            ):
 
-            st.dataframe(
+                st.dataframe(
 
-                pred_df,
+                    pred_df,
 
-                height=500,
+                    height=500,
 
-                use_container_width=True,
+                    use_container_width=True,
 
-                column_config={
+                    column_config={
 
-                    "Date": st.column_config.DateColumn(
-                        "Forecast Date",
-                        format="DD-MM-YYYY"
-                    ),
+                        "Date": st.column_config.DateColumn(
+                            "Forecast Date",
+                            format="DD-MM-YYYY"
+                        ),
 
-                    "Predicted Price": st.column_config.NumberColumn(
-                        "Predicted Stock Price ($)",
-                        format="$ %.2f"
-                    )
-                }
+                        "Predicted Price": st.column_config.NumberColumn(
+                            "Predicted Stock Price ($)",
+                            format="$ %.2f"
+                        )
+                    }
 
-            )
+                )
 
             # =================================
             # DOWNLOAD BUTTON
