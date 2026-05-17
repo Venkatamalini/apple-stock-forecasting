@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
 import plotly.express as px
 
 # =========================================
@@ -61,12 +60,7 @@ class NaiveModel:
 # =========================================
 # LOAD MODEL
 # =========================================
-try:
-    with open("naive_model.pkl", "rb") as f:
-        model = pickle.load(f)
 
-except:
-    model = NaiveModel(strategy="drift")
 
 # =========================================
 # TITLE
@@ -147,10 +141,23 @@ if uploaded_file:
             # =============================
             # PREDICTION
             # =============================
-            preds = model.predict(
-                close_prices,
-                steps=forecast_days
-            )
+            # =============================
+            # SIMPLE FORECAST
+            # =============================
+            last_price = close_prices[-1]
+
+            trend = (
+            close_prices[-1] - close_prices[-2]
+           )
+
+            preds = []
+
+            next_price = last_price
+
+            for _ in range(forecast_days):
+                next_price += trend
+            preds.append(round(next_price, 2))
+            
 
             # =============================
             # FUTURE DATES
