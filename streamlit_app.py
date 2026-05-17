@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 
 # =========================================
@@ -13,64 +12,58 @@ st.set_page_config(
 )
 
 # =========================================
-# CUSTOM UI COLORS
+# COLORS
 # =========================================
 PRIMARY = "#ADADDE"
 SECONDARY = "#DEADAD"
 ACCENT = "#ADDEAD"
 
+BG = "#0B0F19"
+CARD = "#141A26"
+TEXT = "#FFFFFF"
+
 # =========================================
-# CUSTOM STYLING
+# CUSTOM CSS
 # =========================================
 st.markdown(f"""
 <style>
 
 html, body, [class*="css"] {{
-    background-color: #0F1117;
-    color: white;
-    font-family: 'Inter', sans-serif;
+    background-color: {BG};
+    color: {TEXT};
 }}
 
 .stApp {{
-    background-color: #0F1117;
+    background-color: {BG};
 }}
 
 [data-testid="stSidebar"] {{
-    background-color: #161A23;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    background-color: {CARD};
 }}
 
 h1 {{
-    color: {PRIMARY};
+    color: {PRIMARY} !important;
     font-size: 42px !important;
     font-weight: 800 !important;
 }}
 
 h2, h3 {{
-    color: white;
+    color: white !important;
+}}
+
+p, label, div {{
+    color: white !important;
 }}
 
 div[data-testid="metric-container"] {{
-    background: #161A23;
+    background-color: {CARD};
     border: 1px solid rgba(255,255,255,0.08);
     padding: 18px;
-    border-radius: 18px;
+    border-radius: 16px;
 }}
 
-.stButton>button {{
-    background-color: {PRIMARY};
-    color: black;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-}}
-
-.stDownloadButton>button {{
-    background-color: {ACCENT};
-    color: black;
-    border-radius: 10px;
-    border: none;
-    font-weight: 700;
+.stDataFrame {{
+    background-color: {CARD};
 }}
 
 </style>
@@ -81,7 +74,7 @@ div[data-testid="metric-container"] {{
 # =========================================
 st.title("📈 Apple Stock Price Forecasting")
 st.markdown(
-    "### Modern AI-Based Stock Prediction Dashboard"
+    "### Modern AI-Powered Stock Prediction Dashboard"
 )
 
 # =========================================
@@ -105,12 +98,12 @@ uploaded_file = st.file_uploader(
 )
 
 # =========================================
-# MAIN APP
+# MAIN LOGIC
 # =========================================
 if uploaded_file:
 
     # =====================================
-    # LOAD DATA
+    # READ DATA
     # =====================================
     df = pd.read_csv(uploaded_file)
 
@@ -122,12 +115,14 @@ if uploaded_file:
     # =====================================
     if "Close" not in df.columns:
 
-        st.error("CSV must contain a Close column")
+        st.error(
+            "CSV must contain a Close column"
+        )
 
     else:
 
         # =================================
-        # DATE PROCESSING
+        # DATE HANDLING
         # =================================
         if "Date" in df.columns:
 
@@ -247,7 +242,7 @@ if uploaded_file:
                 st.warning("HOLD POSITION")
 
             # =================================
-            # MODERN STOCK GRAPH
+            # MODERN GRAPH
             # =================================
             st.subheader("📈 Stock Forecast Chart")
 
@@ -267,12 +262,9 @@ if uploaded_file:
 
                 line=dict(
                     color=PRIMARY,
-                    width=3
+                    width=4,
+                    shape="spline"
                 ),
-
-                fill='tozeroy',
-
-                fillcolor='rgba(173,173,222,0.08)',
 
                 hovertemplate=
                 "<b>Historical Price</b><br>" +
@@ -281,7 +273,7 @@ if uploaded_file:
             ))
 
             # ---------------------------------
-            # FORECAST LINE
+            # FORECAST PRICE
             # ---------------------------------
             fig.add_trace(go.Scatter(
 
@@ -295,39 +287,54 @@ if uploaded_file:
                 line=dict(
                     color=ACCENT,
                     width=4,
-                    dash="dash"
+                    dash="dot",
+                    shape="spline"
                 ),
 
                 marker=dict(
-                    size=7,
-                    color=ACCENT
+                    color=ACCENT,
+                    size=7
                 ),
 
                 hovertemplate=
-                "<b>Forecast Price</b><br>" +
+                "<b>Forecast</b><br>" +
                 "Date: %{x}<br>" +
-                "Forecast: $%{y:.2f}<extra></extra>"
+                "Forecast Price: $%{y:.2f}<extra></extra>"
             ))
 
             # ---------------------------------
-            # SPLIT LINE
+            # FORECAST START MARKER
             # ---------------------------------
-            fig.add_vline(
-                x=pred_df["Date"].iloc[0],
-                line_width=2,
-                line_dash="dot",
-                line_color=SECONDARY
-            )
+            fig.add_trace(go.Scatter(
+
+                x=[pred_df["Date"].iloc[0]],
+                y=[pred_df["Predicted Price"].iloc[0]],
+
+                mode="markers+text",
+
+                text=["Forecast Start"],
+
+                textposition="top center",
+
+                marker=dict(
+                    color=SECONDARY,
+                    size=12
+                ),
+
+                showlegend=False
+            ))
 
             # =================================
             # LAYOUT
             # =================================
             fig.update_layout(
 
-                paper_bgcolor="#0F1117",
-                plot_bgcolor="#161A23",
+                paper_bgcolor=BG,
+                plot_bgcolor=CARD,
 
                 height=700,
+
+                hovermode="x unified",
 
                 title=dict(
                     text="Apple Stock Forecast Trend",
@@ -340,26 +347,21 @@ if uploaded_file:
 
                 xaxis=dict(
                     title="Date",
-                    showgrid=False,
-                    color="white"
+                    color="white",
+                    showgrid=False
                 ),
 
                 yaxis=dict(
                     title="Stock Price ($)",
-                    showgrid=True,
-                    gridcolor="rgba(255,255,255,0.06)",
-                    color="white"
+                    color="white",
+                    gridcolor="rgba(255,255,255,0.08)"
                 ),
 
-                hovermode="x unified",
-
                 legend=dict(
+                    bgcolor="rgba(0,0,0,0)",
                     orientation="h",
-                    yanchor="bottom",
                     y=1.02,
-                    xanchor="center",
-                    x=0.5,
-                    bgcolor="rgba(0,0,0,0)"
+                    x=0.3
                 ),
 
                 font=dict(
@@ -369,7 +371,7 @@ if uploaded_file:
             )
 
             # =================================
-            # DISPLAY GRAPH
+            # SHOW GRAPH
             # =================================
             st.plotly_chart(
                 fig,
