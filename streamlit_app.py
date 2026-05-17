@@ -63,7 +63,7 @@ if uploaded_file:
             # =========================
             # PREDICTION
             # =========================
-            preds = model.predict(close_prices, steps=30)
+            preds = [close_prices.iloc[-1]] * 30
 
             # =========================
             # CREATE FUTURE DATES
