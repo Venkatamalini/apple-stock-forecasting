@@ -63,7 +63,8 @@ if uploaded_file:
             # =========================
             # PREDICTION
             # =========================
-            preds = [close_prices.iloc[-1]] * 30
+            last_price = close_prices.iloc[-1]
+            preds = [last_price + i * 0.5 for i in range(30)]
 
             # =========================
             # CREATE FUTURE DATES
