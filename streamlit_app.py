@@ -108,6 +108,9 @@ st.markdown(
 # =========================================
 st.sidebar.title("⚙️ Forecast Settings")
 
+# =========================================
+# FORECAST DAYS
+# =========================================
 st.sidebar.markdown("### Forecast Days")
 
 forecast_days = st.sidebar.slider(
@@ -120,22 +123,13 @@ forecast_days = st.sidebar.slider(
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown("### Historical Data Days")
-
-historical_days = st.sidebar.slider(
-    "",
-    min_value=30,
-    max_value=365,
-    value=180,
-    key="historical_slider"
-)
-
-st.sidebar.markdown("---")
-
 # =========================================
-# QUICK TIMEFRAME BUTTONS
+# QUICK HISTORICAL RANGE
 # =========================================
 st.sidebar.markdown("### Quick Historical Range")
+
+# Default value
+historical_days = 180
 
 row1_col1, row1_col2, row1_col3 = st.sidebar.columns(3)
 
@@ -145,38 +139,50 @@ if row1_col1.button("1D"):
 if row1_col2.button("5D"):
     historical_days = 5
 
-if row1_col3.button("1W"):
-    historical_days = 7
+if row1_col3.button("1M"):
+    historical_days = 30
 
 row2_col1, row2_col2, row2_col3 = st.sidebar.columns(3)
 
-if row2_col1.button("1M"):
-    historical_days = 30
-
-if row2_col2.button("3M"):
+if row2_col1.button("3M"):
     historical_days = 90
 
-if row2_col3.button("6M"):
+if row2_col2.button("6M"):
     historical_days = 180
+
+if row2_col3.button("1Y"):
+    historical_days = 365
 
 row3_col1, row3_col2, row3_col3 = st.sidebar.columns(3)
 
 if row3_col1.button("YTD"):
     historical_days = 220
 
-if row3_col2.button("1Y"):
-    historical_days = 365
-
-if row3_col3.button("2Y"):
+if row3_col2.button("2Y"):
     historical_days = 730
 
-row4_col1, row4_col2 = st.sidebar.columns(2)
-
-if row4_col1.button("5Y"):
+if row3_col3.button("5Y"):
     historical_days = 1825
 
-if row4_col2.button("MAX"):
+row4_col1 = st.sidebar.columns(1)[0]
+
+if row4_col1.button("MAX"):
     historical_days = 3650
+
+st.sidebar.markdown("---")
+
+# =========================================
+# CUSTOM HISTORICAL DAYS
+# =========================================
+st.sidebar.markdown("### Custom Historical Days")
+
+historical_days = st.sidebar.slider(
+    "",
+    min_value=1,
+    max_value=3650,
+    value=historical_days,
+    key="historical_slider"
+)
 
 # =========================================
 # FILE UPLOAD
