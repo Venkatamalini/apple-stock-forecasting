@@ -14,14 +14,17 @@ st.set_page_config(
 # =========================================
 # COLORS
 # =========================================
-PRIMARY = "#C4B5FD"
-SECONDARY = "#F9A8D4"
-ACCENT = "#86EFAC"
+# =========================================
+# NEW MODERN COLOR PALETTE
+# =========================================
 
-BG = "#0F172A"
-CARD = "#1E293B"
-TEXT = "#F8FAFC"
+PRIMARY = "#60A5FA"      # Blue
+SECONDARY = "#F59E0B"    # Orange
+ACCENT = "#34D399"       # Emerald
 
+BG = "#111827"           # Dark Slate
+CARD = "#1F2937"         # Card Background
+TEXT = "#F9FAFB"         # Soft White
 # =========================================
 # CUSTOM CSS
 # =========================================
