@@ -56,10 +56,6 @@ p, label, div, span {{
     color: {TEXT} !important;
 }}
 
-small {{
-    color: {TEXT} !important;
-}}
-
 section[data-testid="stFileUploader"] {{
     background-color: white;
     padding: 15px;
@@ -96,32 +92,6 @@ div[data-testid="metric-container"] {{
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }}
 
-[data-testid="stDataFrame"] {{
-    background-color: white !important;
-}}
-
-[data-testid="stDataFrame"] * {{
-    color: {TEXT} !important;
-}}
-
-.ag-root-wrapper {{
-    background-color: white !important;
-}}
-
-.ag-header {{
-    background-color: #E5E7EB !important;
-}}
-
-.ag-header-cell-label {{
-    color: {TEXT} !important;
-    font-weight: bold !important;
-}}
-
-.ag-cell {{
-    color: {TEXT} !important;
-    background-color: white !important;
-}}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -135,22 +105,22 @@ st.markdown(
 )
 
 # =========================================
-# SIDEBAR
+# SIDEBAR SETTINGS
 # =========================================
-st.sidebar.title("⚙ Forecast Settings")
+st.sidebar.title("⚙️ Forecast Settings")
 
 forecast_days = st.sidebar.slider(
     "Forecast Days",
-    7,
-    120,
-    60
+    min_value=7,
+    max_value=120,
+    value=60
 )
 
 historical_days = st.sidebar.slider(
     "Historical Data Days",
-    30,
-    365,
-    180
+    min_value=30,
+    max_value=365,
+    value=180
 )
 
 # =========================================
@@ -167,7 +137,7 @@ uploaded_file = st.file_uploader(
 if uploaded_file:
 
     # =====================================
-    # READ DATA
+    # READ CSV
     # =====================================
     df = pd.read_csv(uploaded_file)
 
@@ -189,13 +159,13 @@ if uploaded_file:
     if "Close" not in df.columns:
 
         st.error(
-            "CSV must contain Close column"
+            "CSV must contain a Close column"
         )
 
     else:
 
         # =================================
-        # DATE HANDLING
+        # DATE COLUMN
         # =================================
         if "Date" in df.columns:
 
@@ -211,21 +181,31 @@ if uploaded_file:
                 periods=len(df)
             )
 
+        # =================================
+        # REMOVE INVALID DATES
+        # =================================
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # CLOSE PRICE
+        # SORT DATES PROPERLY
+        # =================================
+        df = df.sort_values("Date")
+
+        # =================================
+        # CLOSE PRICE DATA
         # =================================
         close_prices = df["Close"].dropna().values
 
         if len(close_prices) < 2:
 
-            st.error("Not enough data")
+            st.error(
+                "Not enough data for forecasting"
+            )
 
         else:
 
             # =================================
-            # FORECAST LOGIC
+            # FORECAST CALCULATION
             # =================================
             last_price = close_prices[-1]
 
@@ -257,14 +237,18 @@ if uploaded_file:
             )[1:]
 
             pred_df = pd.DataFrame({
+
                 "Date": future_dates,
+
                 "Predicted Price": preds
             })
 
             # =================================
             # METRICS
             # =================================
-            st.subheader("📊 Forecast Insights")
+            st.subheader(
+                "📊 Forecast Insights"
+            )
 
             change = (
                 (preds[-1] - preds[0])
@@ -274,85 +258,97 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
+
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
+
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
+
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
                 )
 
             # =================================
-            # PROFESSIONAL STOCK MARKET GRAPH
+            # STOCK MARKET GRAPH
             # =================================
-            st.subheader("📈 Apple Stock Prediction")
+            st.subheader(
+                "📈 Apple Stock Prediction"
+            )
 
             fig = go.Figure()
 
             # =================================
-            # HISTORICAL STOCK PRICE
+            # HISTORICAL STOCK LINE
             # =================================
+            historical_df = df.tail(
+                historical_days
+            )
+
             fig.add_trace(go.Scatter(
 
-                x=df["Date"].tail(historical_days),
-                y=df["Close"].tail(historical_days),
+                x=historical_df["Date"],
+
+                y=historical_df["Close"],
 
                 mode="lines",
 
-                name="AAPL Historical",
+                name="Historical Price",
 
                 line=dict(
                     color="#2563EB",
                     width=2.5,
-                    shape="spline"
+                    shape="linear"
                 ),
 
                 hovertemplate=
-                "<b>AAPL Historical</b><br>" +
+                "<b>Historical Price</b><br>" +
                 "Date: %{x}<br>" +
                 "Price: $%{y:.2f}<extra></extra>"
             ))
 
             # =================================
-            # PREDICTED STOCK PRICE
+            # FORECAST LINE
             # =================================
             fig.add_trace(go.Scatter(
 
                 x=pred_df["Date"],
+
                 y=pred_df["Predicted Price"],
 
                 mode="lines",
 
-                name="AAPL Forecast",
+                name="Forecast Price",
 
                 line=dict(
                     color="#059669",
                     width=3,
                     dash="dot",
-                    shape="spline"
+                    shape="linear"
                 ),
 
                 hovertemplate=
-                "<b>AAPL Forecast</b><br>" +
+                "<b>Forecast Price</b><br>" +
                 "Date: %{x}<br>" +
                 "Forecast: $%{y:.2f}<extra></extra>"
             ))
 
             # =================================
-            # FORECAST START MARKER
+            # FORECAST START POINT
             # =================================
             fig.add_trace(go.Scatter(
 
                 x=[pred_df["Date"].iloc[0]],
+
                 y=[pred_df["Predicted Price"].iloc[0]],
 
                 mode="markers",
@@ -366,11 +362,12 @@ if uploaded_file:
             ))
 
             # =================================
-            # PROFESSIONAL LAYOUT
+            # GRAPH LAYOUT
             # =================================
             fig.update_layout(
 
                 paper_bgcolor="#FAFAFA",
+
                 plot_bgcolor="#FFFFFF",
 
                 height=650,
@@ -388,7 +385,7 @@ if uploaded_file:
 
                 xaxis=dict(
 
-                    title="",
+                    title="Date",
 
                     showgrid=False,
 
@@ -486,7 +483,7 @@ if uploaded_file:
             )
 
             # =================================
-            # CLICK-VIEW FORECAST TABLE
+            # FORECAST TABLE
             # =================================
             with st.expander(
                 "📅 Click to View Detailed Forecast Data"
@@ -512,11 +509,10 @@ if uploaded_file:
                             format="$ %.2f"
                         )
                     }
-
                 )
 
             # =================================
-            # DOWNLOAD BUTTON
+            # DOWNLOAD CSV
             # =================================
             csv = pred_df.to_csv(
                 index=False
