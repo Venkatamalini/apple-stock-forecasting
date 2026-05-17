@@ -19,7 +19,6 @@ SECONDARY = "#059669"
 ACCENT = "#DC2626"
 
 BG = "#FAFAFA"
-CARD = "#FFFFFF"
 TEXT = "#1F2937"
 
 # =========================================
@@ -98,7 +97,7 @@ div[data-testid="metric-container"] {{
 # =========================================
 # TITLE
 # =========================================
-st.title("📈 Apple Stock Price Forecasting")
+st.title("📈 Apple Stock Prediction")
 
 st.markdown(
     "### AI-Powered Financial Forecast Dashboard"
@@ -397,6 +396,10 @@ if uploaded_file:
 
                     rangeselector=dict(
 
+                        y=1.18,
+
+                        x=0.02,
+
                         buttons=list([
 
                             dict(
@@ -448,14 +451,18 @@ if uploaded_file:
 
                     orientation="h",
 
-                    y=1.05,
+                    y=1.12,
 
-                    x=0.02,
+                    x=0.18,
 
-                    bgcolor="rgba(0,0,0,0)",
+                    bgcolor="rgba(255,255,255,0.85)",
+
+                    bordercolor="#D1D5DB",
+
+                    borderwidth=1,
 
                     font=dict(
-                        size=13,
+                        size=12,
                         color="#111827"
                     )
                 ),
@@ -463,7 +470,7 @@ if uploaded_file:
                 margin=dict(
                     l=40,
                     r=40,
-                    t=80,
+                    t=150,
                     b=40
                 ),
 
