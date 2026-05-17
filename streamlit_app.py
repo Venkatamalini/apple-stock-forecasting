@@ -14,13 +14,13 @@ st.set_page_config(
 # =========================================
 # PROFESSIONAL STOCK MARKET THEME
 # =========================================
-PRIMARY = "#2563EB"      # Professional Blue
-SECONDARY = "#059669"    # Market Green
-ACCENT = "#DC2626"       # Financial Red
+PRIMARY = "#2563EB"
+SECONDARY = "#059669"
+ACCENT = "#DC2626"
 
-BG = "#FAFAFA"           # Off-White / Cream
-CARD = "#FFFFFF"         # White Cards
-TEXT = "#1F2937"         # Dark Gray Text
+BG = "#FAFAFA"
+CARD = "#FFFFFF"
+TEXT = "#1F2937"
 
 # =========================================
 # CUSTOM CSS
@@ -120,31 +120,6 @@ div[data-testid="metric-container"] {{
 .ag-cell {{
     color: {TEXT} !important;
     background-color: white !important;
-}}
-
-.ag-menu {{
-    background-color: white !important;
-    color: {TEXT} !important;
-}}
-
-.ag-menu-option {{
-    color: {TEXT} !important;
-}}
-
-.ag-menu-option:hover {{
-    background-color: #F3F4F6 !important;
-}}
-
-.js-plotly-plot .plotly .legendtext {{
-    fill: {TEXT} !important;
-}}
-
-.js-plotly-plot .plotly .xtick text {{
-    fill: {TEXT} !important;
-}}
-
-.js-plotly-plot .plotly .ytick text {{
-    fill: {TEXT} !important;
 }}
 
 </style>
@@ -299,37 +274,32 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
-
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
-
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
                 )
 
             # =================================
-            # STOCK GRAPH
+            # PROFESSIONAL STOCK MARKET GRAPH
             # =================================
-            st.subheader(
-                "📈 Apple Stock Prediction"
-            )
+            st.subheader("📈 Apple Stock Prediction")
 
             fig = go.Figure()
 
             # =================================
-            # HISTORICAL PRICE
+            # HISTORICAL STOCK PRICE
             # =================================
             fig.add_trace(go.Scatter(
 
@@ -338,25 +308,22 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Historical Stock Price",
+                name="AAPL Historical",
 
                 line=dict(
-                    color=PRIMARY,
-                    width=3
+                    color="#2563EB",
+                    width=2.5,
+                    shape="spline"
                 ),
 
-                fill='tozeroy',
-
-                fillcolor='rgba(37,99,235,0.08)',
-
                 hovertemplate=
-                "<b>Historical Stock Price</b><br>" +
+                "<b>AAPL Historical</b><br>" +
                 "Date: %{x}<br>" +
                 "Price: $%{y:.2f}<extra></extra>"
             ))
 
             # =================================
-            # FORECAST GRAPH
+            # PREDICTED STOCK PRICE
             # =================================
             fig.add_trace(go.Scatter(
 
@@ -365,16 +332,17 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Predicted Stock Price",
+                name="AAPL Forecast",
 
                 line=dict(
-                    color=SECONDARY,
-                    width=4,
-                    dash="dash"
+                    color="#059669",
+                    width=3,
+                    dash="dot",
+                    shape="spline"
                 ),
 
                 hovertemplate=
-                "<b>Predicted Stock Price</b><br>" +
+                "<b>AAPL Forecast</b><br>" +
                 "Date: %{x}<br>" +
                 "Forecast: $%{y:.2f}<extra></extra>"
             ))
@@ -387,67 +355,125 @@ if uploaded_file:
                 x=[pred_df["Date"].iloc[0]],
                 y=[pred_df["Predicted Price"].iloc[0]],
 
-                mode="markers+text",
-
-                text=["Forecast Starts"],
-
-                textposition="top center",
+                mode="markers",
 
                 marker=dict(
-                    color=ACCENT,
-                    size=12
+                    color="#DC2626",
+                    size=10
                 ),
 
-                showlegend=False
+                name="Forecast Start"
             ))
 
             # =================================
-            # LAYOUT
+            # PROFESSIONAL LAYOUT
             # =================================
             fig.update_layout(
 
                 paper_bgcolor="#FAFAFA",
                 plot_bgcolor="#FFFFFF",
 
-                height=700,
+                height=650,
 
                 hovermode="x unified",
 
                 title=dict(
-                    text="Apple Stock Prediction Trend",
-                    x=0.5,
+                    text="Apple Inc. (AAPL)",
+                    x=0.02,
                     font=dict(
-                        size=28,
-                        color=TEXT
+                        size=26,
+                        color="#111827"
                     )
                 ),
 
                 xaxis=dict(
-                    title="X-Axis → Date",
-                    color=TEXT,
-                    showgrid=False
+
+                    title="",
+
+                    showgrid=False,
+
+                    color="#374151",
+
+                    rangeslider=dict(
+                        visible=False
+                    ),
+
+                    rangeselector=dict(
+
+                        buttons=list([
+
+                            dict(
+                                count=7,
+                                label="1W",
+                                step="day",
+                                stepmode="backward"
+                            ),
+
+                            dict(
+                                count=1,
+                                label="1M",
+                                step="month",
+                                stepmode="backward"
+                            ),
+
+                            dict(
+                                count=6,
+                                label="6M",
+                                step="month",
+                                stepmode="backward"
+                            ),
+
+                            dict(
+                                count=1,
+                                label="1Y",
+                                step="year",
+                                stepmode="backward"
+                            ),
+
+                            dict(
+                                step="all",
+                                label="MAX"
+                            )
+                        ])
+                    )
                 ),
 
                 yaxis=dict(
-                    title="Y-Axis → Stock Price ($)",
-                    color=TEXT,
-                    gridcolor="rgba(0,0,0,0.08)"
+
+                    title="Stock Price ($)",
+
+                    color="#374151",
+
+                    gridcolor="rgba(0,0,0,0.06)"
                 ),
 
                 legend=dict(
+
                     orientation="h",
-                    y=1.02,
-                    x=0.2,
+
+                    y=1.05,
+
+                    x=0.02,
+
+                    bgcolor="rgba(0,0,0,0)",
+
                     font=dict(
-                        color=TEXT,
-                        size=14
-                    ),
-                    bgcolor="rgba(0,0,0,0)"
+                        size=13,
+                        color="#111827"
+                    )
+                ),
+
+                margin=dict(
+                    l=40,
+                    r=40,
+                    t=80,
+                    b=40
                 ),
 
                 font=dict(
-                    color=TEXT,
-                    size=14
+                    family="Arial",
+                    size=14,
+                    color="#111827"
                 )
             )
 
