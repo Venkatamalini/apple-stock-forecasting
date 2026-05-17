@@ -70,3 +70,9 @@ Interactive web application for real-time stock prediction.
 Visualizations for trend analysis, volatility, and stock market patterns.
 
 ![EDA Charts](screenshots/eda_chart.png)
+
+
+
+## Live Demo
+
+[Streamlit App](https://apple-stock-forecasting.streamlit.app/)
