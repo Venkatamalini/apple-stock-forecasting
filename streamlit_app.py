@@ -108,19 +108,75 @@ st.markdown(
 # =========================================
 st.sidebar.title("⚙️ Forecast Settings")
 
+st.sidebar.markdown("### Forecast Days")
+
 forecast_days = st.sidebar.slider(
-    "Forecast Days",
+    "",
     min_value=7,
     max_value=120,
-    value=60
+    value=60,
+    key="forecast_slider"
 )
 
+st.sidebar.markdown("---")
+
+st.sidebar.markdown("### Historical Data Days")
+
 historical_days = st.sidebar.slider(
-    "Historical Data Days",
+    "",
     min_value=30,
     max_value=365,
-    value=180
+    value=180,
+    key="historical_slider"
 )
+
+st.sidebar.markdown("---")
+
+# =========================================
+# QUICK TIMEFRAME BUTTONS
+# =========================================
+st.sidebar.markdown("### Quick Historical Range")
+
+row1_col1, row1_col2, row1_col3 = st.sidebar.columns(3)
+
+if row1_col1.button("1D"):
+    historical_days = 1
+
+if row1_col2.button("5D"):
+    historical_days = 5
+
+if row1_col3.button("1W"):
+    historical_days = 7
+
+row2_col1, row2_col2, row2_col3 = st.sidebar.columns(3)
+
+if row2_col1.button("1M"):
+    historical_days = 30
+
+if row2_col2.button("3M"):
+    historical_days = 90
+
+if row2_col3.button("6M"):
+    historical_days = 180
+
+row3_col1, row3_col2, row3_col3 = st.sidebar.columns(3)
+
+if row3_col1.button("YTD"):
+    historical_days = 220
+
+if row3_col2.button("1Y"):
+    historical_days = 365
+
+if row3_col3.button("2Y"):
+    historical_days = 730
+
+row4_col1, row4_col2 = st.sidebar.columns(2)
+
+if row4_col1.button("5Y"):
+    historical_days = 1825
+
+if row4_col2.button("MAX"):
+    historical_days = 3650
 
 # =========================================
 # FILE UPLOAD
@@ -186,7 +242,7 @@ if uploaded_file:
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # SORT DATES PROPERLY
+        # SORT DATES
         # =================================
         df = df.sort_values("Date")
 
@@ -392,49 +448,6 @@ if uploaded_file:
 
                     rangeslider=dict(
                         visible=False
-                    ),
-
-                    rangeselector=dict(
-
-                        y=1.18,
-
-                        x=0.02,
-
-                        buttons=list([
-
-                            dict(
-                                count=7,
-                                label="1W",
-                                step="day",
-                                stepmode="backward"
-                            ),
-
-                            dict(
-                                count=1,
-                                label="1M",
-                                step="month",
-                                stepmode="backward"
-                            ),
-
-                            dict(
-                                count=6,
-                                label="6M",
-                                step="month",
-                                stepmode="backward"
-                            ),
-
-                            dict(
-                                count=1,
-                                label="1Y",
-                                step="year",
-                                stepmode="backward"
-                            ),
-
-                            dict(
-                                step="all",
-                                label="MAX"
-                            )
-                        ])
                     )
                 ),
 
