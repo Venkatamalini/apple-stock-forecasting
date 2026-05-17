@@ -1,84 +1,50 @@
-# apple-stock-forecasting
-Apple Stock Price Forecasting using Machine Learning and Time Series Analysis
-Apple Stock Price Forecasting 📈
+# Apple Stock Price Forecasting 📈
 
 This project focuses on predicting Apple stock prices for the next 30 days using Machine Learning and Time Series Forecasting techniques. Historical stock market data from 2012–2019 is analyzed to identify trends, seasonality, and market patterns.
 
-Features
+## Features
 
-Exploratory Data Analysis (EDA)
+* Exploratory Data Analysis (EDA)
+* Stock Trend & Volatility Analysis
+* Forecasting using ARIMA, SARIMA, and XGBoost
+* Data Visualization & Insights
+* Streamlit Web Application Deployment
+* Future Stock Price Prediction
 
-Stock Trend & Volatility Analysis
+## Tech Stack
 
-Forecasting using ARIMA, SARIMA, and XGBoost
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Scikit-learn
+* XGBoost
+* Streamlit
 
-Data Visualization & Insights
-
-Streamlit Web Application Deployment
-
-Future Stock Price Prediction
-
-
-Tech Stack
-
-Python
-
-Pandas
-
-NumPy
-
-Matplotlib
-
-Scikit-learn
-
-XGBoost
-
-Streamlit
-
-
-Dataset
+## Dataset
 
 Historical Apple stock data containing:
 
-Open Price
+* Open Price
+* High Price
+* Low Price
+* Close Price
+* Volume
 
-High Price
-
-Low Price
-
-Close Price
-
-Volume
-
-
-Project Workflow
+## Project Workflow
 
 1. Data Collection
-
-
 2. Data Preprocessing
-
-
 3. Exploratory Data Analysis
-
-
 4. Feature Engineering
-
-
 5. Model Building
-
-
 6. Model Evaluation
-
-
 7. Deployment using Streamlit
 
-
-
-Goal
+## Goal
 
 To help investors and analysts understand stock market trends and forecast future Apple stock prices using predictive analytics.
 
-Deployment
+## Deployment
 
 Interactive Streamlit app for real-time stock forecasting and visualization.
