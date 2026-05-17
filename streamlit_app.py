@@ -177,7 +177,7 @@ if uploaded_file:
 
             future_dates = pd.date_range(
             start=last_date,
-            periods=forecast_days + 1
+            periods=len(preds) + 1
             )[1:]
 
             # =============================
