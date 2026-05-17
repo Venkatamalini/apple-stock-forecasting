@@ -14,13 +14,13 @@ st.set_page_config(
 # =========================================
 # COLORS
 # =========================================
-PRIMARY = "#ADADDE"
-SECONDARY = "#DEADAD"
-ACCENT = "#ADDEAD"
+PRIMARY = "#C4B5FD"
+SECONDARY = "#F9A8D4"
+ACCENT = "#86EFAC"
 
-BG = "#0B0F19"
-CARD = "#141A26"
-TEXT = "#FFFFFF"
+BG = "#0F172A"
+CARD = "#1E293B"
+TEXT = "#F8FAFC"
 
 # =========================================
 # CUSTOM CSS
@@ -52,18 +52,28 @@ h2, h3 {{
 }}
 
 p, label, div {{
-    color: white !important;
+    color: {TEXT} !important;
+}}
+
+section[data-testid="stFileUploader"] {{
+    background-color: {CARD};
+    padding: 15px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+}}
+
+button[kind="primary"] {{
+    background-color: {PRIMARY} !important;
+    color: black !important;
+    border-radius: 10px !important;
+    font-weight: bold !important;
 }}
 
 div[data-testid="metric-container"] {{
     background-color: {CARD};
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 18px;
     border-radius: 16px;
-}}
-
-.stDataFrame {{
-    background-color: {CARD};
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.08);
 }}
 
 </style>
@@ -74,7 +84,7 @@ div[data-testid="metric-container"] {{
 # =========================================
 st.title("📈 Apple Stock Price Forecasting")
 st.markdown(
-    "### Modern AI-Powered Stock Prediction Dashboard"
+    "### AI-Powered Financial Forecast Dashboard"
 )
 
 # =========================================
@@ -90,7 +100,7 @@ forecast_days = st.sidebar.slider(
 )
 
 # =========================================
-# FILE UPLOADER
+# FILE UPLOAD
 # =========================================
 uploaded_file = st.file_uploader(
     "📂 Upload Stock CSV File",
@@ -102,9 +112,6 @@ uploaded_file = st.file_uploader(
 # =========================================
 if uploaded_file:
 
-    # =====================================
-    # READ DATA
-    # =====================================
     df = pd.read_csv(uploaded_file)
 
     st.subheader("📄 Dataset Preview")
@@ -116,13 +123,13 @@ if uploaded_file:
     if "Close" not in df.columns:
 
         st.error(
-            "CSV must contain a Close column"
+            "CSV must contain Close column"
         )
 
     else:
 
         # =================================
-        # DATE HANDLING
+        # DATE PROCESSING
         # =================================
         if "Date" in df.columns:
 
@@ -141,7 +148,7 @@ if uploaded_file:
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # CLOSE PRICE
+        # CLOSE PRICES
         # =================================
         close_prices = df["Close"].dropna().values
 
@@ -152,7 +159,7 @@ if uploaded_file:
         else:
 
             # =================================
-            # FORECAST LOGIC
+            # FORECAST
             # =================================
             last_price = close_prices[-1]
 
@@ -183,9 +190,6 @@ if uploaded_file:
                 periods=forecast_days + 1
             )[1:]
 
-            # =================================
-            # FORECAST DATAFRAME
-            # =================================
             pred_df = pd.DataFrame({
                 "Date": future_dates,
                 "Predicted Price": preds
@@ -204,53 +208,31 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
-
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
-
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
                 )
 
             # =================================
-            # RECOMMENDATION
+            # PLOT GRAPH
             # =================================
-            st.subheader("💡 Recommendation")
-
-            if change > 1:
-
-                st.success("BUY SIGNAL")
-
-            elif change < -1:
-
-                st.error("SELL SIGNAL")
-
-            else:
-
-                st.warning("HOLD POSITION")
-
-            # =================================
-            # MODERN GRAPH
-            # =================================
-            st.subheader("📈 Stock Forecast Chart")
+            st.subheader("📈 Stock Price Plot")
 
             fig = go.Figure()
 
-            # ---------------------------------
-            # HISTORICAL STOCK PRICE
-            # ---------------------------------
+            # Historical
             fig.add_trace(go.Scatter(
 
                 x=df["Date"],
@@ -258,70 +240,45 @@ if uploaded_file:
 
                 mode="lines",
 
-                name="Historical Price",
+                name="Historical",
 
                 line=dict(
                     color=PRIMARY,
-                    width=4,
-                    shape="spline"
-                ),
-
-                hovertemplate=
-                "<b>Historical Price</b><br>" +
-                "Date: %{x}<br>" +
-                "Price: $%{y:.2f}<extra></extra>"
+                    width=3
+                )
             ))
 
-            # ---------------------------------
-            # FORECAST PRICE
-            # ---------------------------------
+            # Forecast
             fig.add_trace(go.Scatter(
 
                 x=pred_df["Date"],
                 y=pred_df["Predicted Price"],
 
-                mode="lines+markers",
+                mode="lines",
 
                 name="Forecast",
 
                 line=dict(
                     color=ACCENT,
                     width=4,
-                    dash="dot",
-                    shape="spline"
-                ),
-
-                marker=dict(
-                    color=ACCENT,
-                    size=7
-                ),
-
-                hovertemplate=
-                "<b>Forecast</b><br>" +
-                "Date: %{x}<br>" +
-                "Forecast Price: $%{y:.2f}<extra></extra>"
+                    dash="dash"
+                )
             ))
 
-            # ---------------------------------
-            # FORECAST START MARKER
-            # ---------------------------------
+            # Forecast Start
             fig.add_trace(go.Scatter(
 
                 x=[pred_df["Date"].iloc[0]],
                 y=[pred_df["Predicted Price"].iloc[0]],
 
-                mode="markers+text",
-
-                text=["Forecast Start"],
-
-                textposition="top center",
+                mode="markers",
 
                 marker=dict(
                     color=SECONDARY,
                     size=12
                 ),
 
-                showlegend=False
+                name="Forecast Start"
             ))
 
             # =================================
@@ -332,16 +289,20 @@ if uploaded_file:
                 paper_bgcolor=BG,
                 plot_bgcolor=CARD,
 
-                height=700,
+                height=650,
 
                 hovermode="x unified",
 
+                font=dict(
+                    color="white",
+                    size=14
+                ),
+
                 title=dict(
-                    text="Apple Stock Forecast Trend",
+                    text="Apple Stock Price Prediction",
                     x=0.5,
                     font=dict(
-                        size=26,
-                        color="white"
+                        size=26
                     )
                 ),
 
@@ -358,21 +319,12 @@ if uploaded_file:
                 ),
 
                 legend=dict(
-                    bgcolor="rgba(0,0,0,0)",
                     orientation="h",
                     y=1.02,
                     x=0.3
-                ),
-
-                font=dict(
-                    color="white",
-                    size=14
                 )
             )
 
-            # =================================
-            # SHOW GRAPH
-            # =================================
             st.plotly_chart(
                 fig,
                 use_container_width=True
