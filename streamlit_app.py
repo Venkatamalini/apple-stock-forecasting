@@ -316,7 +316,7 @@ if uploaded_file:
             # STOCK GRAPH
             # =================================
             st.subheader(
-                "📈 Historical vs Forecast Prices"
+                "📈 Apple Stock Prediction"
             )
 
             fig = go.Figure()
@@ -407,7 +407,7 @@ if uploaded_file:
                 hovermode="x unified",
 
                 title=dict(
-                    text="Apple Stock Price Forecast",
+                    text="Apple Stock Prediction Trend",
                     x=0.5,
                     font=dict(
                         size=28,
