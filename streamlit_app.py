@@ -171,6 +171,13 @@ forecast_days = st.sidebar.slider(
     60
 )
 
+historical_days = st.sidebar.slider(
+    "Historical Data Days",
+    30,
+    365,
+    180
+)
+
 # =========================================
 # FILE UPLOAD
 # =========================================
@@ -326,8 +333,8 @@ if uploaded_file:
             # =================================
             fig.add_trace(go.Scatter(
 
-                x=df["Date"],
-                y=df["Close"],
+                x=df["Date"].tail(historical_days),
+                y=df["Close"].tail(historical_days),
 
                 mode="lines",
 
