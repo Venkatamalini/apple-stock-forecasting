@@ -109,12 +109,6 @@ st.markdown(
 st.sidebar.title("⚙️ Forecast Settings")
 
 # =========================================
-# SESSION STATE DEFAULTS
-# =========================================
-if "historical_days" not in st.session_state:
-    st.session_state.historical_days = 180
-
-# =========================================
 # FORECAST DAYS
 # =========================================
 st.sidebar.markdown("### Forecast Days")
@@ -130,67 +124,21 @@ forecast_days = st.sidebar.slider(
 st.sidebar.markdown("---")
 
 # =========================================
-# QUICK HISTORICAL RANGE
+# HISTORICAL DATA DAYS
 # =========================================
-st.sidebar.markdown("### Quick Historical Range")
-
-row1_col1, row1_col2, row1_col3 = st.sidebar.columns(3)
-
-if row1_col1.button("1D"):
-    st.session_state.historical_days = 1
-
-if row1_col2.button("5D"):
-    st.session_state.historical_days = 5
-
-if row1_col3.button("1M"):
-    st.session_state.historical_days = 30
-
-row2_col1, row2_col2, row2_col3 = st.sidebar.columns(3)
-
-if row2_col1.button("3M"):
-    st.session_state.historical_days = 90
-
-if row2_col2.button("6M"):
-    st.session_state.historical_days = 180
-
-if row2_col3.button("1Y"):
-    st.session_state.historical_days = 365
-
-row3_col1, row3_col2, row3_col3 = st.sidebar.columns(3)
-
-if row3_col1.button("YTD"):
-    st.session_state.historical_days = 220
-
-if row3_col2.button("2Y"):
-    st.session_state.historical_days = 730
-
-if row3_col3.button("5Y"):
-    st.session_state.historical_days = 1825
-
-row4_col1 = st.sidebar.columns(1)[0]
-
-if row4_col1.button("MAX"):
-    st.session_state.historical_days = 3650
-
-st.sidebar.markdown("---")
-
-# =========================================
-# CUSTOM HISTORICAL DAYS
-# =========================================
-st.sidebar.markdown("### Custom Historical Days")
+st.sidebar.markdown("### Historical Data Days")
 
 historical_days = st.sidebar.slider(
     "",
     min_value=1,
     max_value=3650,
-    value=st.session_state.historical_days,
+    value=180,
     key="historical_slider"
 )
 
-# =========================================
-# UPDATE SESSION STATE
-# =========================================
-st.session_state.historical_days = historical_days
+st.sidebar.markdown(
+    f"Showing last **{historical_days} days** of historical stock data."
+)
 
 # =========================================
 # FILE UPLOAD
@@ -251,13 +199,9 @@ if uploaded_file:
             )
 
         # =================================
-        # REMOVE INVALID DATES
+        # CLEAN DATA
         # =================================
         df = df.dropna(subset=["Date"])
-
-        # =================================
-        # SORT DATES
-        # =================================
         df = df.sort_values("Date")
 
         # =================================
@@ -306,18 +250,14 @@ if uploaded_file:
             )[1:]
 
             pred_df = pd.DataFrame({
-
                 "Date": future_dates,
-
                 "Predicted Price": preds
             })
 
             # =================================
             # METRICS
             # =================================
-            st.subheader(
-                "📊 Forecast Insights"
-            )
+            st.subheader("📊 Forecast Insights")
 
             change = (
                 (preds[-1] - preds[0])
@@ -327,21 +267,18 @@ if uploaded_file:
             col1, col2, col3 = st.columns(3)
 
             with col1:
-
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
-
                 st.metric(
                     "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
-
                 st.metric(
                     "Lowest Price",
                     f"${min(preds):.2f}"
@@ -350,19 +287,15 @@ if uploaded_file:
             # =================================
             # STOCK MARKET GRAPH
             # =================================
-            st.subheader(
-                "📈 Apple Stock Prediction"
-            )
+            st.subheader("📈 Apple Stock Prediction")
 
             fig = go.Figure()
 
-            # =================================
-            # HISTORICAL STOCK LINE
-            # =================================
-            historical_df = df.tail(
-                historical_days
-            )
+            historical_df = df.tail(historical_days)
 
+            # =================================
+            # HISTORICAL LINE
+            # =================================
             fig.add_trace(go.Scatter(
 
                 x=historical_df["Date"],
