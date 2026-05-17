@@ -48,3 +48,25 @@ To help investors and analysts understand stock market trends and forecast futur
 ## Deployment
 
 Interactive Streamlit app for real-time stock forecasting and visualization.
+
+
+## Screenshots
+
+### Forecast Graphs
+Shows predicted Apple stock prices and forecasting trends.
+
+![Forecast Graph](screenshots/forecast_graph.png)
+
+---
+
+### Streamlit UI
+Interactive web application for real-time stock prediction.
+
+![Streamlit UI](screenshots/streamlit_ui.png)
+
+---
+
+### EDA Charts
+Visualizations for trend analysis, volatility, and stock market patterns.
+
+![EDA Charts](screenshots/eda_chart.png)
