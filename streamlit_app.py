@@ -13,35 +13,65 @@ st.set_page_config(
 )
 
 # =========================================
-# CUSTOM BLACK & WHITE THEME
+# CUSTOM UI COLORS
 # =========================================
-st.markdown("""
+PRIMARY = "#ADADDE"
+SECONDARY = "#DEADAD"
+ACCENT = "#ADDEAD"
+
+# =========================================
+# CUSTOM STYLING
+# =========================================
+st.markdown(f"""
 <style>
 
-html, body, [class*="css"] {
-    background-color: #000000;
+html, body, [class*="css"] {{
+    background-color: #0F1117;
     color: white;
-}
+    font-family: 'Inter', sans-serif;
+}}
 
-.stApp {
-    background-color: #000000;
-}
+.stApp {{
+    background-color: #0F1117;
+}}
 
-[data-testid="stSidebar"] {
-    background-color: #111111;
-}
+[data-testid="stSidebar"] {{
+    background-color: #161A23;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}}
 
-h1, h2, h3 {
+h1 {{
+    color: {PRIMARY};
+    font-size: 42px !important;
+    font-weight: 800 !important;
+}}
+
+h2, h3 {{
     color: white;
-}
+}}
 
-.metric-box {
-    background-color: #111111;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #333333;
-    text-align: center;
-}
+div[data-testid="metric-container"] {{
+    background: #161A23;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 18px;
+    border-radius: 18px;
+}}
+
+.stButton>button {{
+    background-color: {PRIMARY};
+    color: black;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+}}
+
+.stDownloadButton>button {{
+    background-color: {ACCENT};
+    color: black;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+}}
 
 </style>
 """, unsafe_allow_html=True)
@@ -50,7 +80,9 @@ h1, h2, h3 {
 # TITLE
 # =========================================
 st.title("📈 Apple Stock Price Forecasting")
-st.markdown("### AI-Based Future Stock Prediction Dashboard")
+st.markdown(
+    "### Modern AI-Based Stock Prediction Dashboard"
+)
 
 # =========================================
 # SIDEBAR
@@ -58,27 +90,27 @@ st.markdown("### AI-Based Future Stock Prediction Dashboard")
 st.sidebar.title("⚙ Forecast Settings")
 
 forecast_days = st.sidebar.slider(
-    "Select Forecast Days",
+    "Forecast Days",
     7,
     90,
     30
 )
 
 # =========================================
-# FILE UPLOAD
+# FILE UPLOADER
 # =========================================
 uploaded_file = st.file_uploader(
-    "Upload Stock CSV File",
+    "📂 Upload Stock CSV File",
     type=["csv"]
 )
 
 # =========================================
-# MAIN LOGIC
+# MAIN APP
 # =========================================
 if uploaded_file:
 
     # =====================================
-    # READ DATA
+    # LOAD DATA
     # =====================================
     df = pd.read_csv(uploaded_file)
 
@@ -89,7 +121,8 @@ if uploaded_file:
     # VALIDATION
     # =====================================
     if "Close" not in df.columns:
-        st.error("CSV must contain 'Close' column")
+
+        st.error("CSV must contain a Close column")
 
     else:
 
@@ -110,27 +143,27 @@ if uploaded_file:
                 periods=len(df)
             )
 
-        # Remove invalid dates
         df = df.dropna(subset=["Date"])
 
         # =================================
-        # CLOSE PRICES
+        # CLOSE PRICE
         # =================================
         close_prices = df["Close"].dropna().values
 
         if len(close_prices) < 2:
 
-            st.error("Not enough data for prediction")
+            st.error("Not enough data")
 
         else:
 
             # =================================
-            # SIMPLE TREND FORECAST
+            # FORECAST LOGIC
             # =================================
             last_price = close_prices[-1]
 
             trend = (
-                close_prices[-1] - close_prices[-2]
+                close_prices[-1]
+                - close_prices[-2]
             )
 
             preds = []
@@ -152,7 +185,7 @@ if uploaded_file:
 
             future_dates = pd.date_range(
                 start=last_date,
-                periods=len(preds) + 1
+                periods=forecast_days + 1
             )[1:]
 
             # =================================
@@ -169,26 +202,30 @@ if uploaded_file:
             st.subheader("📊 Forecast Insights")
 
             change = (
-                (preds[-1] - preds[0]) / preds[0]
+                (preds[-1] - preds[0])
+                / preds[0]
             ) * 100
 
             col1, col2, col3 = st.columns(3)
 
             with col1:
+
                 st.metric(
                     "Expected Change",
                     f"{change:.2f}%"
                 )
 
             with col2:
+
                 st.metric(
-                    "Maximum Price",
+                    "Highest Price",
                     f"${max(preds):.2f}"
                 )
 
             with col3:
+
                 st.metric(
-                    "Minimum Price",
+                    "Lowest Price",
                     f"${min(preds):.2f}"
                 )
 
@@ -210,114 +247,130 @@ if uploaded_file:
                 st.warning("HOLD POSITION")
 
             # =================================
-            # PROFESSIONAL STOCK CHART
+            # MODERN STOCK GRAPH
             # =================================
             st.subheader("📈 Stock Forecast Chart")
 
             fig = go.Figure()
 
-            # -------------------------------
-            # Actual Stock Prices
-            # -------------------------------
+            # ---------------------------------
+            # HISTORICAL STOCK PRICE
+            # ---------------------------------
             fig.add_trace(go.Scatter(
+
                 x=df["Date"],
                 y=df["Close"],
+
                 mode="lines",
-                name="Actual Price",
+
+                name="Historical Price",
+
                 line=dict(
-                    color="white",
-                    width=2.5
+                    color=PRIMARY,
+                    width=3
                 ),
+
+                fill='tozeroy',
+
+                fillcolor='rgba(173,173,222,0.08)',
+
                 hovertemplate=
-                "<b>Actual Price</b><br>" +
+                "<b>Historical Price</b><br>" +
                 "Date: %{x}<br>" +
                 "Price: $%{y:.2f}<extra></extra>"
             ))
 
-            # -------------------------------
-            # Forecast Prices
-            # -------------------------------
+            # ---------------------------------
+            # FORECAST LINE
+            # ---------------------------------
             fig.add_trace(go.Scatter(
+
                 x=pred_df["Date"],
                 y=pred_df["Predicted Price"],
-                mode="lines",
+
+                mode="lines+markers",
+
                 name="Forecast",
+
                 line=dict(
-                    color="#00FF99",
-                    width=3,
+                    color=ACCENT,
+                    width=4,
                     dash="dash"
                 ),
+
+                marker=dict(
+                    size=7,
+                    color=ACCENT
+                ),
+
                 hovertemplate=
                 "<b>Forecast Price</b><br>" +
                 "Date: %{x}<br>" +
-                "Predicted: $%{y:.2f}<extra></extra>"
+                "Forecast: $%{y:.2f}<extra></extra>"
             ))
 
-            # -------------------------------
-            # Prediction Start Point
-            # -------------------------------
-            fig.add_trace(go.Scatter(
-                x=[pred_df["Date"].iloc[0]],
-                y=[pred_df["Predicted Price"].iloc[0]],
-                mode="markers",
-                name="Prediction Start",
-                marker=dict(
-                    color="yellow",
-                    size=10,
-                    symbol="circle"
-                )
-            ))
+            # ---------------------------------
+            # SPLIT LINE
+            # ---------------------------------
+            fig.add_vline(
+                x=pred_df["Date"].iloc[0],
+                line_width=2,
+                line_dash="dot",
+                line_color=SECONDARY
+            )
 
-            # -------------------------------
-            # Layout
-            # -------------------------------
+            # =================================
+            # LAYOUT
+            # =================================
             fig.update_layout(
 
-                template="plotly_dark",
+                paper_bgcolor="#0F1117",
+                plot_bgcolor="#161A23",
 
-                paper_bgcolor="black",
-                plot_bgcolor="black",
-
-                font=dict(
-                    color="white",
-                    size=14
-                ),
-
-                height=650,
+                height=700,
 
                 title=dict(
-                    text="Apple Stock Price Forecast",
+                    text="Apple Stock Forecast Trend",
                     x=0.5,
-                    font=dict(size=24)
+                    font=dict(
+                        size=26,
+                        color="white"
+                    )
                 ),
 
                 xaxis=dict(
                     title="Date",
                     showgrid=False,
-                    zeroline=False
+                    color="white"
                 ),
 
                 yaxis=dict(
                     title="Stock Price ($)",
                     showgrid=True,
-                    gridcolor="rgba(255,255,255,0.1)"
+                    gridcolor="rgba(255,255,255,0.06)",
+                    color="white"
                 ),
+
+                hovermode="x unified",
 
                 legend=dict(
                     orientation="h",
                     yanchor="bottom",
                     y=1.02,
-                    xanchor="right",
-                    x=1,
+                    xanchor="center",
+                    x=0.5,
                     bgcolor="rgba(0,0,0,0)"
                 ),
 
-                hovermode="x unified"
+                font=dict(
+                    color="white",
+                    size=14
+                )
             )
 
-            # -------------------------------
-            # Render Chart
-            # -------------------------------
+            # =================================
+            # DISPLAY GRAPH
+            # =================================
             st.plotly_chart(
                 fig,
                 use_container_width=True
@@ -347,5 +400,5 @@ if uploaded_file:
 else:
 
     st.info(
-        "⬆ Upload a stock CSV file to start forecasting"
+        "⬆ Upload a stock CSV file to begin forecasting"
     )
